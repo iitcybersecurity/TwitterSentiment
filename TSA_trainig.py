@@ -126,7 +126,7 @@ GLOVE_EMB = settings.HOME_DIRECTORY + settings.GLOVE_FILE
 EMBEDDING_DIM = 200
 LR = 1e-3
 BATCH_SIZE = 1024
-EPOCHS = 1
+EPOCHS = 10
 MODEL_PATH = '.../output/kaggle/working/best_model.hdf5'
 
 embeddings_index = {}
