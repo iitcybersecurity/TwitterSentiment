@@ -126,7 +126,7 @@ GLOVE_EMB = settings.HOME_DIRECTORY + settings.GLOVE_FILE
 EMBEDDING_DIM = 200
 LR = 1e-3
 BATCH_SIZE = 1024
-EPOCHS = 10
+EPOCHS = 200
 MODEL_PATH = '.../output/kaggle/working/best_model.hdf5'
 
 embeddings_index = {}
@@ -180,7 +180,7 @@ ReduceLROnPlateau = ReduceLROnPlateau(factor=0.1,
                                       monitor='val_loss',
                                       verbose=1)
 
-log_dir = settings.HOME_DIRECTORY + "logs/fit/" + datetime.datetime.now().strftime("%Y-%m-%d %H.%M.%S")
+log_dir = settings.HOME_DIRECTORY + "/logs/fit/" + datetime.datetime.now().strftime("%Y-%m-%d %H.%M.%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 stop_callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10)
 
@@ -188,7 +188,7 @@ checkpoint_filepath = 'tmp/checkpoint/weights.ckpt'
 model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     filepath=checkpoint_filepath,
     save_weights_only=True,
-    monitor='val_acc',
+    monitor='val_accuracy',
     mode='max',
     save_best_only=True)
 
