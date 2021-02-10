@@ -1,11 +1,13 @@
 import datetime
-
+import os
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
 import nltk
+from keras import models
+from tensorflow.python.keras.callbacks import ModelCheckpoint
 
 nltk.download('stopwords')
 from nltk.corpus import stopwords
@@ -13,7 +15,7 @@ from nltk.stem import SnowballStemmer
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-
+import pickle
 import re
 import settings
 
@@ -92,6 +94,11 @@ from keras.preprocessing.text import Tokenizer
 
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(train_data.text)
+# saving the tokenizer (useful in the deploying phase when you have to load the tokenizer to convert the input tweet)
+with open(os.path.join(settings.HOME_DIRECTORY,'tokenizer.pickle'), 'wb') as handle:
+    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
 
 word_index = tokenizer.word_index
 vocab_size = len(tokenizer.word_index) + 1
@@ -127,7 +134,7 @@ EMBEDDING_DIM = 200
 LR = 1e-3
 BATCH_SIZE = 1024
 EPOCHS = 200
-MODEL_PATH = '.../output/kaggle/working/best_model.hdf5'
+#MODEL_PATH = '.../output/kaggle/working/best_model.hdf5'
 
 embeddings_index = {}
 
@@ -169,6 +176,9 @@ x = Dense(512, activation='relu')(x)
 outputs = Dense(1, activation='sigmoid')(x)
 model = tf.keras.Model(sequence_input, outputs)
 
+#save the model structure (useful in the deploying phase to load the same model)
+model.save(os.path.join(settings.HOME_DIRECTORY, "model_network"))
+
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
@@ -184,7 +194,7 @@ log_dir = settings.HOME_DIRECTORY + "/logs/fit/" + datetime.datetime.now().strft
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 stop_callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10)
 
-checkpoint_filepath = 'tmp/checkpoint/weights.ckpt'
+checkpoint_filepath = os.path.join(os.path.join(settings.HOME_DIRECTORY, 'checkpoint'), 'weights.ckpt')
 model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     filepath=checkpoint_filepath,
     save_weights_only=True,
@@ -194,9 +204,9 @@ model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 
 print("Training on GPU...") if tf.test.is_gpu_available() else print("Training on CPU...")
 
-history = model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=EPOCHS,
-                        validation_data=(x_test, y_test),                                             #stop_callback
-                        callbacks=[ReduceLROnPlateau, tensorboard_callback, model_checkpoint_callback, stop_callback])
+history = model.fit(x_train[0:200], y_train[0:200], batch_size=BATCH_SIZE, epochs=EPOCHS,
+                        validation_data=(x_test[0:20], y_test[0:20]),                                             #stop_callback
+                        callbacks=[ReduceLROnPlateau, tensorboard_callback, model_checkpoint_callback])
 
 s, (at, al) = plt.subplots(2, 1)
 at.plot(history.history['accuracy'], c='b')
@@ -253,3 +263,4 @@ def plot_confusion_matrix(cm, classes,
     plt.figure(figsize=(6, 6))
     plot_confusion_matrix(cnf_matrix, classes=test_data.sentiment.unique(), title="Confusion matrix")
     plt.show()
+
