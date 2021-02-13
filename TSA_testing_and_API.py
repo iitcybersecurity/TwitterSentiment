@@ -61,13 +61,6 @@ def avg(arr):
     res /= len(arr)
     return res
 
-#this function transform a row of a database in a dictionary type data
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-
 #-------------------------------------HANDLERS--------------------------------------------#
 
 # this handles the errors for missing parameters
