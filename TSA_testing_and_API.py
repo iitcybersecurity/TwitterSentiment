@@ -140,8 +140,8 @@ def api_Text():
 
     predicted_sentiment_array = predict_tweet(text)
     for i in range(len(predicted_sentiment_array)):
-        positive = round(1 - predicted_sentiment_array[i][0], 8)
-        negative = round(predicted_sentiment_array[i][0], 8)
+        positive = round(predicted_sentiment_array[i][0], 8)
+        negative = round(1-predicted_sentiment_array[i][0], 8)
 
         data[i]['positive'] = str(positive)
         data[i]['negative'] = str(negative)
@@ -184,8 +184,8 @@ def api_Keyword():
 
     predicted_sentiment_array = predict_tweet(tweet_result)
     predicted_sentiment = avg(predicted_sentiment_array)
-    positive = round(1-predicted_sentiment[0],8)
-    negative = round(predicted_sentiment[0],8)
+    positive = round(predicted_sentiment[0],8)
+    negative = round(1-predicted_sentiment[0],8)
     data = {'keyword': keyword, 'positive': str(positive), 'negative': str(negative)}
 
     return jsonify({'status' : status,
@@ -227,8 +227,8 @@ def api_User():
 
     predicted_sentiment_array = predict_tweet(tweet_result)
     predicted_sentiment = avg(predicted_sentiment_array)
-    positive = round(1-predicted_sentiment[0],8)
-    negative = round(predicted_sentiment[0],8)
+    positive = round(predicted_sentiment[0],8)
+    negative = round(1-predicted_sentiment[0],8)
     data = {'user_id': user_id, 'positive': str(positive), 'negative': str(negative)}
 
     return jsonify({'status' : status,
