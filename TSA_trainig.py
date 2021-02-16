@@ -1,7 +1,7 @@
 import datetime
 import os
 import tensorflow as tf
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
@@ -41,9 +41,9 @@ df.head()
 
 val_count = df.sentiment.value_counts()
 
-plt.figure(figsize=(8, 4))
-plt.bar(val_count.index, val_count.values)
-plt.title("Sentiment Data Distribution")
+#plt.figure(figsize=(8, 4))
+#plt.bar(val_count.index, val_count.values)
+#plt.title("Sentiment Data Distribution")
 
 import random
 
@@ -71,11 +71,11 @@ def preprocess(text, stem=False):
 
 df.text = df.text.apply(lambda x: preprocess(x))
 
-from wordcloud import WordCloud
+#from wordcloud import WordCloud
 
-plt.figure(figsize=(20, 20))
-wc = WordCloud(max_words=2000, width=1600, height=800).generate(" ".join(df[df.sentiment == 'Positive'].text))
-plt.imshow(wc, interpolation='bilinear')
+#plt.figure(figsize=(20, 20))
+#wc = WordCloud(max_words=2000, width=1600, height=800).generate(" ".join(df[df.sentiment == 'Positive'].text))
+#plt.imshow(wc, interpolation='bilinear')
 
 TRAIN_SIZE = 0.8
 MAX_NB_WORDS = 100000
@@ -202,26 +202,26 @@ model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     mode='max',
     save_best_only=True)
 
-print("Training on GPU...") if tf.test.is_gpu_available() else print("Training on CPU...")
+#print("Training on GPU...") if tf.test.is_gpu_available() else print("Training on CPU...")
 
-history = model.fit(x_train[0:200], y_train[0:200], batch_size=BATCH_SIZE, epochs=EPOCHS,
-                        validation_data=(x_test[0:20], y_test[0:20]),                                             #stop_callback
+history = model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=EPOCHS,
+                        validation_data=(x_test, y_test),                                             #stop_callback
                         callbacks=[ReduceLROnPlateau, tensorboard_callback, model_checkpoint_callback])
 
-s, (at, al) = plt.subplots(2, 1)
-at.plot(history.history['accuracy'], c='b')
-at.plot(history.history['val_accuracy'], c='r')
-at.set_title('model accuracy')
-at.set_ylabel('accuracy')
-at.set_xlabel('epoch')
-at.legend(['LSTM_train', 'LSTM_val'], loc='upper left')
+#s, (at, al) = plt.subplots(2, 1)
+#at.plot(history.history['accuracy'], c='b')
+#at.plot(history.history['val_accuracy'], c='r')
+#at.set_title('model accuracy')
+#at.set_ylabel('accuracy')
+#at.set_xlabel('epoch')
+#at.legend(['LSTM_train', 'LSTM_val'], loc='upper left')
 
-al.plot(history.history['loss'], c='m')
-al.plot(history.history['val_loss'], c='c')
-al.set_title('model loss')
-al.set_ylabel('loss')
-al.set_xlabel('epoch')
-al.legend(['train', 'val'], loc='upper left')
+#al.plot(history.history['loss'], c='m')
+#al.plot(history.history['val_loss'], c='c')
+#al.set_title('model loss')
+#al.set_ylabel('loss')
+#al.set_xlabel('epoch')
+#al.legend(['train', 'val'], loc='upper left')
 
 
 def decode_sentiment(score):
