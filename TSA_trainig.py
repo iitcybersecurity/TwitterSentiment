@@ -58,7 +58,8 @@ text_cleaning_re = "@\S+|https?:\S+|http?:\S|[^A-Za-z0-9]+"
 
 
 def preprocess(text, stem=False):
-    text = re.sub(text_cleaning_re, ' ', str(text).lower()).strip()
+    #print(text)
+    text = re.sub(text_cleaning_re, ' ', text.encode('utf-8').lower()).strip()
     tokens = []
     for token in text.split():
         if token not in stop_words:
